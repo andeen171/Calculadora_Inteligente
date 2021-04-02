@@ -1,28 +1,28 @@
-from collections import deque
+from collections import deque # Fiquei em duvida entre usar uma deque ou uma stack de um pacote externo e usei os 2
 from pythonds.basic import Stack
 
 
 class Calc:
     items = deque()
     variables = {}
-    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3} # Ordem de prioridade das operações
 
     @staticmethod
     def calc(user_input):
         identifier = user_input.split()[0]
-        if not identifier.isalpha() and not identifier.isnumeric():
+        if not identifier.isalpha() and not identifier.isnumeric(): # Checando se o identificador é valido (Para dar assign em uma variavel)
             print('Invalid identifier')
             return
         try:
-            nums = ' '.join(Calc.variables.get(x) if x.isalpha() else x for x in user_input.split())
-            print(Calc.postfixToResult(Calc.toPostfix(nums)))
-        except TypeError:
-            print('Unknown variable')
-        except Exception:
+            nums = ' '.join(Calc.variables.get(x) if x.isalpha() else x for x in user_input.split()) 
+            print(Calc.postfixToResult(Calc.toPostfix(nums))) # Chamando as funções de calculo geral ja no print()
+        except TypeError: # excessao para qualquer TypeError é por variavel invalida
+            print('Unknown variable') 
+        except Exception: # Qualquer outra excessao é criado pelo input do usuario ou manipulação deste
             print('Invalid Expression')
 
     @staticmethod
-    def postfixToResult(postfixExpr):
+    def postfixToResult(postfixExpr): # Calculo da expressão convertida em postfix
         operandStack = Stack()
         tokenList = postfixExpr.split()
 
@@ -37,7 +37,7 @@ class Calc:
         return int(operandStack.pop())
 
     @staticmethod
-    def declare_variable(user_input):
+    def declare_variable(user_input): # Metodo pra declaração de variavel do usuario
         var, eq, val = user_input.partition('=')
         var, val = var.strip(), val.strip()
         if not var.isalpha():
@@ -50,13 +50,13 @@ class Calc:
         Calc.variables[var] = val if val.isnumeric() else Calc.variables.get(val)
 
     @staticmethod
-    def toPostfix(infixexpr):
+    def toPostfix(infixexpr): # Conversão da expressão entrada pelo usuario para PostFix
         prec = {"^": 4, "*": 3, "/": 3, "+": 2, "-": 2, "(": 1}
         opStack = Stack()
         postfixList = []
         temporary = infixexpr.split()
         tokenList = []
-        for i in temporary:
+        for i in temporary: # O Split só separa por 1 argumento e sendo ele " " eu tive que filtrar melhor a lista
             if "(" in i and i != "(":
                 tokenList.append("(")
                 tokenList.append(i.strip("("))
@@ -91,7 +91,7 @@ class Calc:
         return " ".join(postfixList)
 
 
-def main():
+def main(): # main que sustenta o programa e aceita os /comands 
     calc = Calc()
     while True:
         user_input = input()
